@@ -3,5 +3,6 @@ autopep8
 fastapi[all]
 uvicorn[standard]
 sqlmodel
+alembic
 # Async S3 client
 miniopy-async

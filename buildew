@@ -99,6 +99,16 @@ if [ "$COMMAND" == "run" ]; then
 
 fi
 
+if [ "$COMMAND" == "alembic" ]; then
+    WHAT_IS_RUN=$1
+    echo Run "${WHAT_IS_RUN}" : "$@"
+    echo
+
+    # TODO: detect first run with empty folder migrations
+
+    .venv/bin/alembic "$@"
+fi
+
 #========================================== BASIC TOOLS ===========================================
 
 if [ "$COMMAND" == "redeps" ]; then
@@ -128,6 +138,6 @@ if [ "$COMMAND" == "services" ]; then
 fi
 
 # =================================================================================================
-AVAILABLE_COMMANDS="run tests redeps up down"
+AVAILABLE_COMMANDS="run tests alembic redeps up down"
 echo ''
 [[ $AVAILABLE_COMMANDS =~ (^| )$COMMAND($| ) ]] && echo 'Ok' || (echo 'Unknown command: ' "$COMMAND" && echo 'Available commands are: ' "$AVAILABLE_COMMANDS")
