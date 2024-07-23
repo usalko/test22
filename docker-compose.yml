@@ -1,0 +1,88 @@
+version: '3.7'
+
+services:
+  pg:
+    image: postgres:15.6-alpine
+    restart: on-failure
+    mem_limit: 512M
+    environment:
+      POSTGRES_PASSWORD: ems
+      POSTGRES_USER: ems
+      POSTGRES_DB: ems
+    # Expose as 127.0.0.1:5432 on host machine for the developers
+    ports:
+      - '5432:5432'
+    volumes:
+      - .data/pg15:/var/lib/postgresql/data
+      - .logs/pg15:/var/logs
+      - .tmp/pg15:/tmp
+      - type: bind
+        source: .history/pg/.bash_history
+        target: /root/.bash_history
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ems" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  s2d3:
+    image: usalko/s2d3:1.0.0
+    restart: on-failure
+    mem_limit: 512M
+    env_file:
+      - .env
+    volumes:
+      - .data/s2d3:/data
+
+  public-api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      # extra_hosts:
+      #   nexus.bia-tech.ru: 10.210.90.10
+    restart: on-failure
+    mem_limit: 256m
+    volumes:
+      - '.:/home/web/app'
+      - .logs/public-api:/var/log
+      - type: bind
+        source: .history/public-api/.bash_history
+        target: /home/web/.bash_history
+    ports:
+      - 8004:8000
+    env_file:
+      - .env
+    depends_on:
+      pg:
+        condition: service_healthy
+      s2d3:
+        condition: service_healthy
+    command: >
+      python3 -m uvicorn public_api:public_app
+
+  private-api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      # extra_hosts:
+      #   nexus.bia-tech.ru: 10.210.90.10
+    restart: on-failure
+    mem_limit: 256m
+    volumes:
+      - '.:/home/web/app'
+      - .logs/public-api:/var/log
+      - type: bind
+        source: .history/public-api/.bash_history
+        target: /home/web/.bash_history
+    ports:
+      - 8004:8000
+    env_file:
+      - .env
+    depends_on:
+      pg:
+        condition: service_healthy
+      s2d3:
+        condition: service_healthy
+    command: >
+      python3 -m uvicorn public_api:public_app
+

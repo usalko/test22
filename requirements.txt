@@ -1,0 +1,7 @@
+pytest
+autopep8
+fastapi[all]
+uvicorn[standard]
+sqlmodel
+# Async S3 client
+miniopy-async
