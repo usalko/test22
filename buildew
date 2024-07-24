@@ -106,10 +106,10 @@ if [ "$COMMAND" == "alembic" ]; then
 
     if [ ! -d migrations ]; then
         .venv/bin/alembic init migrations
-        sed -ire 's:(^import\s+sqlalchemy\s+as\s+sa):\1\nimport sqlmodel \# added :g' ./migrations/script.py.mako 
+        sed -i 's:import sqlalchemy as sa:import sqlalchemy as sa\nimport sqlmodel \# added :g' ./migrations/script.py.mako 
+        sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py 
+        sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py 
     fi
-
-    # TODO: detect first run with empty folder migrations
 
     .venv/bin/alembic "$@"
 fi
