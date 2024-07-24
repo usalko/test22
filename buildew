@@ -74,6 +74,8 @@ echo "=========== $COMMAND"
 echo "$COMMAND ==========="
 echo COMMAND
 
+SERVICES=('pg')
+
 #========================================== TERMINAL STUFF =======================================
 BOLD=$(tput bold)
 NORMAL=$(tput sgr0)
@@ -114,6 +116,17 @@ if [ "$COMMAND" == "alembic" ]; then
     .venv/bin/alembic "$@"
 fi
 
+#========================================== LOGS ==================================================
+if [ "$COMMAND" == "log" ] || [ "$COMMAND" == "logs" ]; then
+    if [ "$*" == "" ]; then
+        echo 'Show logs with timestamp tail <= 10000 entries'
+        docker-compose logs -f --tail 10000 --timestamps
+    else
+        echo "Show logs with timestamp (docker compose logs -f --timestamps $*)"
+        docker-compose logs -f --timestamps "$@"
+    fi
+fi
+
 #========================================== BASIC TOOLS ===========================================
 
 if [ "$COMMAND" == "redeps" ]; then
@@ -143,6 +156,6 @@ if [ "$COMMAND" == "services" ]; then
 fi
 
 # =================================================================================================
-AVAILABLE_COMMANDS="run tests alembic redeps up down"
+AVAILABLE_COMMANDS="run tests alembic redeps log logs up down"
 echo ''
 [[ $AVAILABLE_COMMANDS =~ (^| )$COMMAND($| ) ]] && echo 'Ok' || (echo 'Unknown command: ' "$COMMAND" && echo 'Available commands are: ' "$AVAILABLE_COMMANDS")
