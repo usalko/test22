@@ -74,7 +74,7 @@ echo "=========== $COMMAND"
 echo "$COMMAND ==========="
 echo COMMAND
 
-SERVICES=('pg')
+SERVICES=('pg15' 'main' 's2d3')
 
 #========================================== TERMINAL STUFF =======================================
 BOLD=$(tput bold)
@@ -108,12 +108,98 @@ if [ "$COMMAND" == "alembic" ]; then
 
     if [ ! -d migrations ]; then
         .venv/bin/alembic init migrations
-        sed -i 's:import sqlalchemy as sa:import sqlalchemy as sa\nimport sqlmodel \# added :g' ./migrations/script.py.mako 
-        sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py 
-        sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py 
+        sed -i 's:import sqlalchemy as sa:import sqlalchemy as sa\nimport sqlmodel \# added :g' ./migrations/script.py.mako
+        sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py
+        sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py
     fi
 
     .venv/bin/alembic "$@"
+fi
+
+#========================================== DOCKER-COMPOSE =======================================
+
+function check_folder {
+    FOLDER=$1
+    mkdir -p "$FOLDER" || exit 1
+    chmod a+rwx "$FOLDER"
+    for SERVICE in "${SERVICES[@]}"; do
+        mkdir -p "$FOLDER/$SERVICE" || exit 1
+        chmod a+rwx "$FOLDER/$SERVICE"
+    done
+}
+
+function check_history_folder {
+    FOLDER=.history
+    mkdir -p $FOLDER || exit 1
+    chmod a+rwx $FOLDER
+    for SERVICE in "${SERVICES[@]}"; do
+        mkdir -p "$FOLDER/$SERVICE" || exit 1
+        chmod a+rwx "$FOLDER/$SERVICE"
+        touch "$FOLDER/$SERVICE/.bash_history"
+        chmod a+rwx "$FOLDER/$SERVICE/.bash_history"
+    done
+}
+
+function check_all_folders {
+    # Check the data folders
+    check_folder .data
+
+    # Check the temporary folders
+    check_folder .tmp
+
+    # Check the logger folders
+    check_folder .logs
+
+    # Check the home folders
+    check_history_folder
+}
+
+function start {
+
+    check_all_folders
+
+    if [ "$1" == "" ]; then
+        docker-compose up
+    else
+        # Parse arguments to detect service group "core"
+        DOCKER_COMPOSE_ARGUMENTS=
+        for ARG in "$@"; do
+            if [ "$ARG" == "core" ]; then
+                DOCKER_COMPOSE_ARGUMENTS="$DOCKER_COMPOSE_ARGUMENTS ${SERVICES[*]}"
+            else
+                DOCKER_COMPOSE_ARGUMENTS="$DOCKER_COMPOSE_ARGUMENTS $ARG"
+            fi
+        done
+
+        docker-compose up $DOCKER_COMPOSE_ARGUMENTS
+    fi
+}
+
+if [ "$COMMAND" == "up" ] || [ "$COMMAND" == "start" ]; then
+    echo 'Run docker images'
+
+    start "$@"
+
+fi
+
+function stop {
+    if [ "$1" == "" ]; then
+        docker-compose down -v
+    else
+        docker-compose stop "$@"
+    fi
+}
+
+if [ "$COMMAND" == "stop" ] || [ "$COMMAND" == "down" ] || [ "$COMMAND" == "finish" ]; then
+    echo 'Stop docker images'
+
+    stop "$@"
+fi
+
+if [ "$COMMAND" == "restart" ]; then
+    echo 'Restart services or whole system'
+    stop "$@"
+    start "$@"
 fi
 
 #========================================== LOGS ==================================================

@@ -8,3 +8,8 @@
 
 # Bytecode cache folders
 __pycache__
+
+# runtime folders
+.data
+.tmp
+.history
