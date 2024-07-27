@@ -4,11 +4,11 @@ services:
   pg15:
     image: postgres:15.6-alpine
     restart: on-failure
-    mem_limit: 512M
+    mem_limit: 256M
     environment:
-      POSTGRES_PASSWORD: main
-      POSTGRES_USER: main
-      POSTGRES_DB: main
+      POSTGRES_PASSWORD: test22
+      POSTGRES_USER: test22
+      POSTGRES_DB: test22
     # Expose as 127.0.0.1:5432 on host machine for the developers
     ports:
       - '5432:5432'
@@ -20,7 +20,7 @@ services:
         source: .history/pg/.bash_history
         target: /root/.bash_history
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ems" ]
+      test: [ "CMD-SHELL", "pg_isready -U test22" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -28,20 +28,22 @@ services:
   s2d3:
     image: usalko/s2d3:1.0.0
     restart: on-failure
-    mem_limit: 512M
+    mem_limit: 62M
     env_file:
       - .env
     volumes:
       - .data/s2d3:/data
 
-  main:
+  test22:
     build:
       context: .
       dockerfile: ./Dockerfile
       # extra_hosts:
       #   nexus.bia-tech.ru: 10.210.90.10
     restart: on-failure
-    mem_limit: 256m
+    mem_limit: 256M
+    env_file:
+      - .env
     volumes:
       - '.:/home/web/app'
       - .logs/public-api:/var/log
@@ -50,8 +52,6 @@ services:
         target: /home/web/.bash_history
     ports:
       - 8004:8000
-    env_file:
-      - .env
     depends_on:
       pg15:
         condition: service_healthy

@@ -6,3 +6,5 @@ sqlmodel
 alembic
 # Async S3 client
 miniopy-async
+# Postgres driver
+psycopg[binary,pool]
