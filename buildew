@@ -74,7 +74,7 @@ echo "=========== $COMMAND"
 echo "$COMMAND ==========="
 echo COMMAND
 
-SERVICES=('pg15' 'main' 's2d3')
+SERVICES=('pg15' 'test22' 's2d3')
 
 #========================================== TERMINAL STUFF =======================================
 BOLD=$(tput bold)
@@ -101,6 +101,8 @@ if [ "$COMMAND" == "run" ]; then
 
 fi
 
+#========================================== MIGRATIONS ============================================
+
 if [ "$COMMAND" == "alembic" ]; then
     WHAT_IS_RUN=$1
     echo alembic "${WHAT_IS_RUN}" : "$@"
@@ -113,7 +115,13 @@ if [ "$COMMAND" == "alembic" ]; then
         sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py
     fi
 
-    .venv/bin/alembic "$@"
+    if [ "$WHAT_IS_RUN" == "auto" ]; then
+        TIME_STAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+        .venv/bin/alembic revision --autogenerate -m "Changes ${TIME_STAMP}"
+    else
+        .venv/bin/alembic "$@"
+    fi
+
 fi
 
 #========================================== DOCKER-COMPOSE =======================================
@@ -225,7 +233,7 @@ if [ "$COMMAND" == "clean" ]; then
     find . -name __pycache__ -print0 | xargs -0 rm -fr
 fi
 
-#========================================== RUN TOOLS =============================================
+#========================================== TESTING TOOLS =========================================
 
 if [ "$COMMAND" == "tests" ] || [ "$COMMAND" == "test" ]; then
     echo Run manage script service/manage.py test service/unit_tests "$@"
