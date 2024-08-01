@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from sqlmodel import Field
 
 from .base_model import BaseModel
+from .invariants import *
 
 
 @dataclass
@@ -10,5 +11,5 @@ class SerialNumber(BaseModel, table=True):
     # Series of goods
     [Reference](https://en.wikipedia.org/wiki/Serial_number)
     '''
-    __tablename__ = 'os_model_number'
-    code: str = Field(index=True, unique=True)
+    __tablename__ = 'os_serial_number'
+    serial_number_code: str = Field(index=True, max_length=MAX_SERIAL_NUMBER_LENGTH,  unique=True)
