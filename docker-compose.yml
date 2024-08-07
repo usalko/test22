@@ -26,13 +26,15 @@ services:
       retries: 5
 
   s2d3:
-    image: usalko/s2d3:1.0.0
+    image: usalko/s2d3:0.1.7
     restart: on-failure
     mem_limit: 62M
     env_file:
       - .env
+    ports:
+      - 3333:3333
     volumes:
-      - .data/s2d3:/data
+      - .data/s2d3:/tmp
 
   test22:
     build:
