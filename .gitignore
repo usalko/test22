@@ -13,3 +13,6 @@ __pycache__
 .data
 .tmp
 .history
+
+# There is the build artifacts
+.dist
