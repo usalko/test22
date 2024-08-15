@@ -2,8 +2,8 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 from miniopy_async import Minio
-
-private_app = FastAPI()
+from api import orders
+from app import app
 
 async_minio_client = Minio(
     'play.min.io',
@@ -13,30 +13,31 @@ async_minio_client = Minio(
 )
 
 
-@private_app.get('/')
+@app.get('/')
 async def home():
-    return {'description': 'PRIVATE API'}
+    return {'description': 'Test 22 API'}
 
-# [PUT] /images
 
-# [GET] /images/{image_id}
+@app.get('/test')
+async def pong():
+    return {'test': 'ok'}
 
 
 def openapi_schema():
-    if private_app.openapi_schema:
-        return private_app.openapi_schema
+    if app.openapi_schema:
+        return app.openapi_schema
     openapi_schema = get_openapi(
-        title='Private test21 API',
-        version='1.0.0',
-        summary='This is a private API for test21',
+        title='Test22 API',
+        version='0.1.0',
+        summary='This is a private API for test22',
         description='The private API contains couple of methods for deal with images',
-        routes=private_app.routes,
+        routes=app.routes,
     )
     openapi_schema['info']['x-logo'] = {
-        'url': 'https://test21.qstand.art/img/logo-margin/logo-teal.png'
+        'url': 'https://test22.qstand.art/img/logo-margin/logo-teal.png'
     }
-    private_app.openapi_schema = openapi_schema
-    return private_app.openapi_schema
+    app.openapi_schema = openapi_schema
+    return app.openapi_schema
 
 
-private_app.openapi = openapi_schema
+app.openapi = openapi_schema

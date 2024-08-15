@@ -85,22 +85,10 @@ NORMAL=$(tput sgr0)
 #========================================== COMMANDS =============================================
 
 if [ "$COMMAND" == "run" ]; then
-    WHAT_IS_RUN=$1
-    echo Run "${WHAT_IS_RUN}" : "$@"
     echo
-
-    case $WHAT_IS_RUN in
-    public)
-        .venv/bin/python3 -m uvicorn public_api:public_app --reload
-        ;;
-    private)
-        .venv/bin/python3 -m uvicorn private_api:private_app --reload
-        ;;
-    *)
-        echo "${BOLD}"What need to run?"${NORMAL}" Possible options are: "${BOLD}"public private"${NORMAL}"
-        ;;
-    esac
-
+    echo "${BOLD}" Run: "${NORMAL}" app
+    echo
+    .venv/bin/python3 -m uvicorn main:app --reload-dir ./src
 fi
 
 #========================================== MIGRATIONS ============================================
@@ -120,6 +108,8 @@ if [ "$COMMAND" == "alembic" ]; then
     if [ "$WHAT_IS_RUN" == "auto" ]; then
         TIME_STAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         .venv/bin/alembic revision --autogenerate -m "Changes ${TIME_STAMP}"
+    elif [ "$WHAT_IS_RUN" == "up" ]; then
+        .venv/bin/alembic upgrade head
     else
         .venv/bin/alembic "$@"
     fi

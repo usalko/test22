@@ -1,0 +1,18 @@
+# Python local environment
+.pip
+.venv
+.env
+
+# IDE
+.vscode
+
+# Bytecode cache folders
+__pycache__
+
+# runtime folders
+.data
+.tmp
+.history
+
+# There is the build artifacts
+.dist
