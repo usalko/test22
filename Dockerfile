@@ -10,7 +10,6 @@ RUN echo 'export LC_ALL=ru_RU.UTF-8' >> /etc/profile.d/locale.sh && \
 ENV LANGUAGE=ru_RU.UTF-8 LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8
 
 RUN adduser -D web
-RUN addgroup web
 
 USER web
 
@@ -52,7 +51,6 @@ ENV LANGUAGE=ru_RU.UTF-8 LANG=ru_RU.UTF-8 LC_ALL=ru_RU.UTF-8
 RUN apk add --no-cache --update postgresql15-client bash curl
 
 RUN adduser -D web
-RUN addgroup web
 
 USER web
 
