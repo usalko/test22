@@ -98,11 +98,16 @@ if [ "$COMMAND" == "alembic" ]; then
     echo alembic "${WHAT_IS_RUN}" : "$@"
     echo
 
-    if [ ! -d migrations ]; then
+    if [ ! -d migrations ] || [ "$WHAT_IS_RUN" == "init" ]; then
         .venv/bin/alembic init migrations
-        sed -i 's:import sqlalchemy as sa:import sqlalchemy as sa\nimport sqlmodel \# added :g' ./migrations/script.py.mako
+        # SQLModel specific:
+        # sed -i 's:import sqlalchemy as sa:import sqlalchemy as sa\nimport sqlmodel \# added :g' ./migrations/script.py.mako
+        # sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py
+        # sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py
+
+        # SQLAlchemy specific
         sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py
-        sed -i 's:target_metadata = None:target_metadata = SQLModel.metadata:g' ./migrations/env.py
+        sed -i 's:target_metadata = None:target_metadata = Base.metadata:g' ./migrations/env.py
     fi
 
     if [ "$WHAT_IS_RUN" == "auto" ]; then
@@ -110,7 +115,7 @@ if [ "$COMMAND" == "alembic" ]; then
         .venv/bin/alembic revision --autogenerate -m "Changes ${TIME_STAMP}"
     elif [ "$WHAT_IS_RUN" == "up" ]; then
         .venv/bin/alembic upgrade head
-    else
+    elif [ "$WHAT_IS_RUN" != "init" ]; then
         .venv/bin/alembic "$@"
     fi
 

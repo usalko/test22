@@ -9,8 +9,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-import sqlmodel # added 
-from models import *
 ${imports if imports else ""}
 
 # revision identifiers, used by Alembic.

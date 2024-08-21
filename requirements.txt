@@ -2,7 +2,7 @@ pytest
 autopep8
 fastapi[all]
 uvicorn[standard]
-sqlmodel
+sqlalchemy
 alembic
 # Async S3 client
 miniopy-async
