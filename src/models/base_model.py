@@ -7,17 +7,17 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 def _upper_case_chars(x):
-    return [i for i in range(len(x)) if x[i].isupper()] + [len(x)]
+    return [0] + [i for i in range(len(x)) if x[i].isupper()] + [len(x)]
 
 
 def CAMEL_TO_LOWER_CASE_SNAKE(x):
-    return ''.join(['_' + x[i].lower() + x[i+1: j] for i, j in pairwise(_upper_case_chars(x))])
+    return '_'.join([x[i].lower() + x[i+1: j] for i, j in pairwise(_upper_case_chars(x)) if j > i])
 
 
 @as_declarative()
 class BaseModel:
     '''
-        # Base class for all application entities
+        # Base class for all application entities   
             - id        :: int
     '''
     __abstract__ = True
