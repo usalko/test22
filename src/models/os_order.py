@@ -1,16 +1,17 @@
-from dataclasses import dataclass
-
-from sqlalchemy import Column, String
+from sqlalchemy import Text
+from sqlalchemy.orm import Mapped, mapped_column
 
 from .base_model import BaseModel
 from .invariants import *
 
 
-@dataclass
 class OsOrder(BaseModel):
-    order_number: str = Column(
-        String,
+    '''
+        # Customer order
+            - order_number      :: str
+    '''
+    order_number: Mapped[str] = mapped_column(
+        Text,  # String(MAX_ORDER_NUMBER_LENGTH),
         index=True,
-        # max_length=MAX_ORDER_NUMBER_LENGTH,
         unique=True,
     )
