@@ -107,7 +107,7 @@ if [ "$COMMAND" == "alembic" ]; then
 
         # SQLAlchemy specific
         sed -i 's:from alembic import context:from alembic import context\n\nfrom models import * # necessarily to import something from file where your models are stored\n:g' ./migrations/env.py
-        sed -i 's:target_metadata = None:target_metadata = Base.metadata:g' ./migrations/env.py
+        sed -i 's:target_metadata = None:target_metadata = BaseModel.metadata:g' ./migrations/env.py
     fi
 
     if [ "$WHAT_IS_RUN" == "auto" ]; then
