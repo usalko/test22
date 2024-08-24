@@ -2,7 +2,6 @@ from sqlalchemy import Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from .base_model import BaseModel
-from .invariants import *
 
 
 class OsOrder(BaseModel):

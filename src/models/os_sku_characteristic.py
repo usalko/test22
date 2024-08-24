@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .base_model import BaseModel
-from .invariants import *
 from .os_sku import *
 
 

@@ -1,5 +1,4 @@
 from .base_model import *
-from .invariants import *
 from .os_order import *
 from .os_serial_number import *
 from .os_sku import *

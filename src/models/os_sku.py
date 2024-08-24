@@ -4,7 +4,6 @@ from sqlalchemy import Text
 from sqlalchemy.orm import Mapped, relationship
 
 from .base_model import BaseModel
-from .invariants import *
 from .os_serial_number import *
 
 

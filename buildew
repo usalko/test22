@@ -59,6 +59,7 @@ if [ -f '.env' ]; then
     while IPS='=' read -r key _; do
         if [ "${key}" != "" ] && [[ ! "${key}" =~ .*#.* ]]; then
             eval "export ${key}"
+            echo ${key}
         fi
     done <'.env'
 else
@@ -68,6 +69,7 @@ PYTHONPATH=src
 S3_SECRET_KEY=Q3AM3UQ867SPQQA43P2F
 S3_ACCESS_KEY=zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG
 S3_BASE_URL=http://s2d3
+SQLALCHEMY_URL=postgresql+psycopg://test22:test22@pg15/test22
 EOF
 fi
 
@@ -88,6 +90,7 @@ if [ "$COMMAND" == "run" ]; then
     echo
     echo "${BOLD}" Run: "${NORMAL}" app
     echo
+    echo "Database url is: ${SQLALCHEMY_URL}"
     .venv/bin/python3 -m uvicorn main:app --reload-dir ./src
 fi
 
