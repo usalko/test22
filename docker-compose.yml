@@ -50,17 +50,17 @@ services:
       - '.:/home/web/app'
       - .logs/public-api:/var/log
       - type: bind
-        source: .history/public-api/.bash_history
+        source: .history/test22/.bash_history
         target: /home/web/.bash_history
     ports:
       - 8004:8000
     depends_on:
       pg15:
         condition: service_healthy
-      s2d3:
-        condition: service_healthy
+      # s2d3:
+      #   condition: service_healthy
     command: >
-      python3 -m uvicorn public_api:public_app
+      python3 -m uvicorn main:app
 
   nginx:
     image: nginx:1.27.0-alpine

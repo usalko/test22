@@ -20,15 +20,17 @@ ENV PATH=$VIRTUAL_ENV/bin:$PATH
 RUN mkdir ${APP_HOME}
 WORKDIR ${APP_HOME}
 
+COPY --chown=web:web requirements.txt ./requirements.txt
+
 RUN pip completion --bash >> /home/web/.bashrc \
  && python3 -m venv $VIRTUAL_ENV \
- && pip install -r requirements.txt
+ && $VIRTUAL_ENV/bin/pip install -r requirements.txt
 
 COPY --chown=web:web ./src ./
 
-RUN mkdir -p /home/web/stash 
+# RUN mkdir -p /home/web/stash 
 COPY --chown=web:web . ./
-RUN cp /home/web/stash/*.* ./
+# RUN cp /home/web/stash/*.* ./
 
 # =================================================================================================
 # COPY FROM BUILDER TO RUNTIME
@@ -58,8 +60,8 @@ ENV HOME=/home/web
 ENV APP_HOME=$HOME/app
 ENV VIRTUAL_ENV=$HOME/.venv
 ENV PATH=$PYTHONUSERBASE/bin:$VIRTUAL_ENV/bin:$PATH
-RUN mkdir /home/web/app
-WORKDIR $APP_HOME
+RUN mkdir ${APP_HOME}
+WORKDIR ${APP_HOME}
 
-COPY --chown=web:web --from=builder /home/web/app /home/web/app
-COPY --chown=web:web --from=builder /home/web/.venv /home/web/.venv
+COPY --chown=web:web --from=builder ${APP_HOME} $(APP_HOME)
+COPY --chown=web:web --from=builder ${VIRTUAL_ENV} ${VIRTUAL_ENV}
