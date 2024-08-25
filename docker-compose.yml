@@ -26,7 +26,7 @@ services:
       retries: 5
 
   s2d3:
-    image: usalko/s2d3:0.1.7
+    image: usalko/s2d3:0.1.8
     restart: on-failure
     mem_limit: 62M
     env_file:
@@ -35,6 +35,11 @@ services:
       - 3333:3333
     volumes:
       - .data/s2d3:/tmp
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://127.0.0.1:3333/" ]
+      interval: 3s
+      timeout: 5s
+      retries: 5
 
   test22:
     build:
@@ -53,14 +58,14 @@ services:
         source: .history/test22/.bash_history
         target: /home/web/.bash_history
     ports:
-      - 8004:8000
+      - '8022:8022'
     depends_on:
       pg15:
         condition: service_healthy
-      # s2d3:
-      #   condition: service_healthy
+      s2d3:
+        condition: service_healthy
     command: >
-      python3 -m uvicorn main:app
+      python3 -m uvicorn main:app --port 8022
 
   nginx:
     image: nginx:1.27.0-alpine
