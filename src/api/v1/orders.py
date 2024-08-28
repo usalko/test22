@@ -8,7 +8,7 @@ from schemas import *
 
 router = APIRouter(
     prefix='/api/v1/orders',
-    tags=['users'],
+    tags=['orders'],
     responses={404: {'description': 'Not found'}},
 )
 

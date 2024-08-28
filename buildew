@@ -91,7 +91,7 @@ if [ "$COMMAND" == "run" ]; then
     echo "${BOLD}" Run: "${NORMAL}" app
     echo
     echo "Database url is: ${SQLALCHEMY_URL}"
-    .venv/bin/python3 -m uvicorn main:app --reload-dir ./src
+    .venv/bin/python3 -m uvicorn main:app --reload-dir ./src --port 8022
 fi
 
 #========================================== MIGRATIONS ============================================
