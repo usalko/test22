@@ -1,8 +1,8 @@
-"""Changes 2024-08-22T17:55:02Z
+"""Changes 2024-08-28T21:26:58Z
 
-Revision ID: 4e98beb47850
+Revision ID: b9508f055d85
 Revises: 
-Create Date: 2024-08-22 20:55:03.572569
+Create Date: 2024-08-29 00:26:58.808587
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '4e98beb47850'
+revision: str = 'b9508f055d85'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -34,14 +34,18 @@ def upgrade() -> None:
     op.create_index(op.f('ix_os_serial_number_serial_number_code'), 'os_serial_number', ['serial_number_code'], unique=True)
     op.create_table('os_sku',
     sa.Column('sku_code', sa.Text(), nullable=False),
+    sa.Column('sku_serial_number_id', sa.Integer(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['sku_serial_number_id'], ['os_serial_number.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_os_sku_sku_code'), 'os_sku', ['sku_code'], unique=True)
     op.create_table('os_sku_characteristics',
+    sa.Column('sku_characteristics_sku_id', sa.Integer(), nullable=True),
     sa.Column('sku_characteristics_weight', sa.Float(), nullable=True),
     sa.Column('sku_characteristics_volume', sa.Float(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['sku_characteristics_sku_id'], ['os_sku.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     # ### end Alembic commands ###

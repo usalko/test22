@@ -26,3 +26,14 @@ async def order_details(
     '''
     order = await get_order_by_id(db_session, order_id)
     return order
+
+
+@router.get('/')
+async def read_orders(
+    skip: int = 0,
+    limit: int = 10,
+    search: str | None = None,
+    db_session: Session = Depends(get_db_session),
+):
+    orders = await fetch_orders(db_session, skip=skip, limit=limit, search_query=search)
+    return {'orders': orders, 'skip': skip, 'limit': limit}

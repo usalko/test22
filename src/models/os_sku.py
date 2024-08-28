@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from sqlalchemy import Text
+from sqlalchemy import ForeignKey, Integer, Text
 from sqlalchemy.orm import Mapped, relationship
 
 from .base_model import BaseModel
@@ -19,6 +19,8 @@ class OsSku(BaseModel):
         index=True,
         unique=True,
     )
+    sku_serial_number_id = mapped_column(Integer, ForeignKey('os_serial_number.id'))
     sku_serial_number: Mapped[OsSerialNumber | None] = relationship(
         OsSerialNumber,
+        foreign_keys='[OsSku.sku_serial_number_id]',
     )

@@ -15,8 +15,11 @@ class OsSkuCharacteristics(BaseModel):
         - sku_characteristics_volume:       :: float
         # _
     '''
+    sku_characteristics_sku_id = mapped_column(Integer, ForeignKey('os_sku.id'))
     sku_characteristics_sku: Mapped[OsSku] = relationship(
         OsSku,
+        foreign_keys='[OsSkuCharacteristics.sku_characteristics_sku_id]',
     )
+
     sku_characteristics_weight: Mapped[float | None] = mapped_column()
     sku_characteristics_volume: Mapped[float | None] = mapped_column()
