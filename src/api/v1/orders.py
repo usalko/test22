@@ -37,3 +37,28 @@ async def read_orders(
 ):
     orders = await fetch_orders(db_session, skip=skip, limit=limit, search_query=search)
     return {'orders': orders, 'skip': skip, 'limit': limit}
+
+
+@router.post('/', response_model=Order)
+async def create_order(
+    order: Order,
+    db_session: Session = Depends(get_db_session),
+):
+    return await post_order(db_session, order)
+
+
+@router.put('/{order_id}', response_model=Order)
+async def update_order(
+    order_id: int,
+    order: Order,
+    db_session: Session = Depends(get_db_session),
+):
+    return await put_order(db_session, order_id, order)
+
+
+@router.delete('/{order_id}')
+async def delete_order(
+    order_id: int,
+    db_session: Session = Depends(get_db_session),
+):
+    return await remove_order(db_session, order_id)
